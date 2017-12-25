@@ -6,7 +6,6 @@ class CreateProducts < ActiveRecord::Migration[5.1]
       t.string :color
       t.integer :size
       t.text :description
-
       t.timestamps
     end
   end

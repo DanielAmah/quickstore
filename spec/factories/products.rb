@@ -5,5 +5,6 @@ FactoryGirl.define do
       color { Faker::Lorem.word }
       size { Faker::Number.number(4) }
       description { Faker::Lorem.paragraphs }
+      category_id nil
     end
   end
