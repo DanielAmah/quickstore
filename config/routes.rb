@@ -3,4 +3,5 @@ Rails.application.routes.draw do
   resources :categories do  
     resources :products
   end
+  resources :order_status_codes
 end
