@@ -7,4 +7,6 @@ Rails.application.routes.draw do
   resources :order_status_codes do
     resources :orders
   end
+
+  resources :order_item_status_codes
 end
