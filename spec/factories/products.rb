@@ -7,4 +7,4 @@ FactoryGirl.define do
       description { Faker::Lorem.paragraphs }
       category_id nil
     end
-  end
+end

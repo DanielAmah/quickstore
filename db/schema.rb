@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171226114200) do
+ActiveRecord::Schema.define(version: 20171226194136) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,22 @@ ActiveRecord::Schema.define(version: 20171226114200) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "order_items", force: :cascade do |t|
+    t.integer "quantity"
+    t.float "price"
+    t.string "RMA_number"
+    t.date "RMA_date"
+    t.text "description"
+    t.bigint "product_id"
+    t.bigint "order_id"
+    t.bigint "order_item_status_code_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["order_item_status_code_id"], name: "index_order_items_on_order_item_status_code_id"
+    t.index ["product_id"], name: "index_order_items_on_product_id"
   end
 
   create_table "order_status_codes", force: :cascade do |t|
@@ -55,6 +71,9 @@ ActiveRecord::Schema.define(version: 20171226114200) do
     t.index ["category_id"], name: "index_products_on_category_id"
   end
 
+  add_foreign_key "order_items", "order_item_status_codes"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "products"
   add_foreign_key "orders", "order_status_codes"
   add_foreign_key "products", "categories"
 end
