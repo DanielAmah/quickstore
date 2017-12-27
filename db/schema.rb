@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171227050217) do
+ActiveRecord::Schema.define(version: 20171308182850) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,6 +88,18 @@ ActiveRecord::Schema.define(version: 20171227050217) do
     t.index ["category_id"], name: "index_products_on_category_id"
   end
 
+  create_table "shipments", force: :cascade do |t|
+    t.string "tracking_number"
+    t.date "date"
+    t.text "description"
+    t.bigint "order_id"
+    t.bigint "invoice_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invoice_id"], name: "index_shipments_on_invoice_id"
+    t.index ["order_id"], name: "index_shipments_on_order_id"
+  end
+
   add_foreign_key "invoices", "invoice_status_codes"
   add_foreign_key "invoices", "orders"
   add_foreign_key "order_items", "order_item_status_codes"
@@ -95,4 +107,6 @@ ActiveRecord::Schema.define(version: 20171227050217) do
   add_foreign_key "order_items", "products"
   add_foreign_key "orders", "order_status_codes"
   add_foreign_key "products", "categories"
+  add_foreign_key "shipments", "invoices"
+  add_foreign_key "shipments", "orders"
 end
