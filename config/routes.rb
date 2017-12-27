@@ -15,4 +15,6 @@ Rails.application.routes.draw do
   resources :order_item_status_codes do
     resources :order_items
   end
+
+  resources :invoice_status_codes
 end
