@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   
   resources :order_status_codes do
     resources :orders do
+      resources :shipments
       resources :invoices
       resources :order_items
     end
@@ -18,6 +19,8 @@ Rails.application.routes.draw do
   end
 
   resources :invoice_status_codes do
-    resources :invoices
+    resources :invoices do
+      resources :shipments
+    end
   end
 end
