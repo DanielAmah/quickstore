@@ -9,7 +9,9 @@ Rails.application.routes.draw do
   resources :order_status_codes do
     resources :orders do
       resources :shipments
-      resources :invoices
+      resources :invoices do
+        resources :payments
+      end
       resources :order_items
     end
   end
