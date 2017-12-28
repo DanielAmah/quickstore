@@ -25,4 +25,6 @@ Rails.application.routes.draw do
       resources :shipments
     end
   end
+
+  resources :payment_methods
 end
