@@ -12,7 +12,9 @@ Rails.application.routes.draw do
       resources :invoices do
         resources :payments
       end
-      resources :order_items
+      resources :order_items do
+        resources :shipment_items
+      end
     end
   end
 
@@ -22,7 +24,9 @@ Rails.application.routes.draw do
 
   resources :invoice_status_codes do
     resources :invoices do
-      resources :shipments
+      resources :shipments do
+        resources :shipment_items
+      end
     end
   end
 
