@@ -33,10 +33,16 @@ Rails.application.routes.draw do
   resources :payment_methods
 
   resources :roles
-  resources :users
+  resources :users do
+    collection do 
+      get 'search/:q', :action => 'search', :as => 'search'
+    end
+  end
 
   post 'auth/register', to: 'users#register'
   post 'auth/login', to: 'users#login'
   get 'test', to: 'users#test'
   
+
+  match '/(*url)', to: 'not_found#index', via: :all
 end
