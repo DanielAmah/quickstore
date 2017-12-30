@@ -6,4 +6,9 @@ class User < ApplicationRecord
 
   #encrypt password
   has_secure_password
+
+  def self.search(search)
+    where("name LIKE ?", "%#{search}%") 
+    where("email LIKE ?", "%#{search}%")
+  end
 end
