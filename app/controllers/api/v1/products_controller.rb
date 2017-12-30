@@ -1,3 +1,5 @@
+module Api
+  module V1
 class ProductsController < ApplicationController
   before_action :set_category
   before_action :set_product, only: [:show, :update, :destroy]
@@ -38,4 +40,6 @@ class ProductsController < ApplicationController
   def set_product
     @product = @category.products.find_by!(id: params[:id]) if @category
   end
+end
+end
 end
