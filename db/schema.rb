@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171308182853) do
+ActiveRecord::Schema.define(version: 20171328160030) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -103,6 +103,13 @@ ActiveRecord::Schema.define(version: 20171308182853) do
     t.index ["category_id"], name: "index_products_on_category_id"
   end
 
+  create_table "roles", force: :cascade do |t|
+    t.string "role"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "shipment_items", force: :cascade do |t|
     t.bigint "shipment_id"
     t.bigint "order_item_id"
@@ -124,6 +131,21 @@ ActiveRecord::Schema.define(version: 20171308182853) do
     t.index ["order_id"], name: "index_shipments_on_order_id"
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "password_digest"
+    t.string "phone_number"
+    t.text "address"
+    t.string "city"
+    t.string "state"
+    t.string "country"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "role_id"
+    t.index ["role_id"], name: "index_users_on_role_id"
+  end
+
   add_foreign_key "invoices", "invoice_status_codes"
   add_foreign_key "invoices", "orders"
   add_foreign_key "order_items", "order_item_status_codes"
@@ -136,4 +158,5 @@ ActiveRecord::Schema.define(version: 20171308182853) do
   add_foreign_key "shipment_items", "shipments"
   add_foreign_key "shipments", "invoices"
   add_foreign_key "shipments", "orders"
+  add_foreign_key "users", "roles"
 end

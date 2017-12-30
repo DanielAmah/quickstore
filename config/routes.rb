@@ -31,4 +31,12 @@ Rails.application.routes.draw do
   end
 
   resources :payment_methods
+
+  resources :roles
+  resources :users
+
+  post 'auth/register', to: 'users#register'
+  post 'auth/login', to: 'users#login'
+  get 'test', to: 'users#test'
+  
 end
