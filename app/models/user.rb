@@ -11,4 +11,5 @@ class User < ApplicationRecord
     where("name LIKE ?", "%#{search}%") 
     where("email LIKE ?", "%#{search}%")
   end
+
 end

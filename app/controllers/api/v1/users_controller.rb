@@ -1,5 +1,6 @@
+module Api
+  module V1
 class UsersController < ApplicationController
-skip_before_action :authenticate_request, only: %i[login register]
 before_action :set_user, only: %i[show destroy]
 
 def index
@@ -12,27 +13,6 @@ def index
   end
   json_response(@user)
 end
-
-  def register
-    @user = User.create!(name: params[:name], email: params[:email], password: params[:password], phone_number: params[:phone_number], address: params[:address],
-    city: params[:city], state: params[:state], country: params[:country], role_id: params[:role_id] || 2)
-    if @user.save
-      command = AuthenticateUser.call(params[:email], params[:password])
-      if command.success?
-        obj = {
-          auth_token: command.result,
-          name: @user.name,
-          email: @user.email,
-          role_id: @user.role_id,
-          message: 'User Created Successfully and Logged in'
-        }
-        return json_response(obj, :created)
-      else
-        render json: { error: command.errors }, status: :unauthorized
-      end
-    end 
-    json_response(@user.errors, :created)
-  end
 
   def show
     json_response(@user)
@@ -66,44 +46,24 @@ end
  
      if @user.save(validate: false)
        obj = {
-         message: 'User Updated Succefully'
+         message: 'User Updated Successfully'
        }
        return json_response(obj, :ok)
      end
      json_response(@user.errors, :bad)
   end
 
-  def login
-    authenticate params[:email], params[:password]
-  end
 
-  def test
-    render json: {
-          message: 'You have passed authentication and authorization test'
-        }
-  end
 
   private
 
-  def authenticate(email, password)
-    command = AuthenticateUser.call(email, password)
-
-    if command.success?
-      render json: {
-        access_token: command.result,
-        message: 'User Successfully Logged in'
-      }
-    else
-      render json: { error: command.errors }, status: :unauthorized
-    end
-  end
 
   def set_user
     @user = User.select(
     :id,
     :name,
     :email,
-    :password,
+    :password_digest,
     :phone_number,
     :address,
     :city,
@@ -116,7 +76,7 @@ end
     params.permit(
       :name,
       :email,
-      :password,
+      :password_digest,
       :phone_number,
       :address,
       :city,
@@ -124,4 +84,6 @@ end
       :country
     )
   end
+end
+end
 end

@@ -1,11 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe 'Payment Method API', type: :request do
+  let!(:role) { create(:role) }
+  let!(:users) { create_list(:user, 4, role_id: role.id) }
+  let(:role_id) { role.id }
+  let!(:user_id) { users.first.id }
   let!(:payment_methods){create_list(:payment_method, 10)}
   let(:payment_method_id){payment_methods.first.id}
+  let(:headers) { valid_headers(users.first.id) }
 
-  describe 'GET /payment_methods' do
-      before {get '/payment_methods'}
+  describe 'GET /api/payment_methods' do
+      before {get '/api/payment_methods', headers: headers}
       
       it 'return payment_methods' do 
         expect(json).not_to be_empty
@@ -17,8 +22,8 @@ RSpec.describe 'Payment Method API', type: :request do
       end
   end
 
-  describe "GET /payment_methods/:id" do
-    before{get "/payment_methods/#{payment_method_id}"}
+  describe "GET /api/payment_methods/:id" do
+    before{get "/api/payment_methods/#{payment_method_id}", headers: headers}
 
     context "when the record exists" do
       it 'returns the payment_method' do
@@ -46,11 +51,11 @@ RSpec.describe 'Payment Method API', type: :request do
   
   end
 
-  describe "POST /payment_methods" do
-    let(:valid_attributes) {{ description: 'credit card'}}
+  describe "POST /api/payment_methods" do
+    let(:valid_attributes) {{ description: 'credit card'}.to_json}
 
     context "when the request is valid" do
-      before {post '/payment_methods', params: valid_attributes}
+      before {post '/api/payment_methods', params: valid_attributes, headers: headers}
       it "create a payment_method" do
         expect(json['description']).to eq('credit card')
       end
@@ -63,7 +68,7 @@ RSpec.describe 'Payment Method API', type: :request do
     end
 
     context "when the request is invalid" do
-      before {post '/payment_methods', params: {name: ''}}
+      before {post '/api/payment_methods', params: {name: ''}.to_json, headers: headers}
 
       it "return a status code of 422" do
         expect(response).to have_http_status(422)
@@ -78,9 +83,9 @@ RSpec.describe 'Payment Method API', type: :request do
   end
 
   describe "PUT /payment_methods/:id" do
-    let(:valid_attributes) {{description: 'Cash' }}
+    let(:valid_attributes) {{description: 'Cash' }.to_json}
     context "when the record exists" do
-      before {put "/payment_methods/#{payment_method_id}", params: valid_attributes }
+      before {put "/api/payment_methods/#{payment_method_id}", params: valid_attributes , headers: headers}
 
       it 'updates the record' do
         expect(response.body).to match(/PaymentMethod Updated Successfully/) 
@@ -93,7 +98,7 @@ RSpec.describe 'Payment Method API', type: :request do
   end
 
   describe 'DELETE /payment_methods/:id' do
-    before {delete "/payment_methods/#{payment_method_id}"}
+    before {delete "/api/payment_methods/#{payment_method_id}", headers: headers}
     it "return status 200" do
       expect(response).to have_http_status(200)
     end

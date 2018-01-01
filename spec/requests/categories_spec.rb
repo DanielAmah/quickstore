@@ -1,11 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe 'Category API', type: :request do
+  let!(:role) { create(:role) }
+  let!(:users) { create_list(:user, 4, role_id: role.id) }
+  let(:role_id) { role.id }
+  let!(:user_id) { users.first.id }
   let!(:categories){create_list(:category, 10)}
   let(:category_id){categories.first.id}
+  let(:headers) { valid_headers(users.first.id) }
 
   describe 'GET /categories' do
-      before {get '/categories'}
+      before do
+        get '/api/categories',  headers: headers
+      end
       
       it 'return categories' do 
         expect(json).not_to be_empty
@@ -18,7 +25,7 @@ RSpec.describe 'Category API', type: :request do
   end
 
   describe "GET /categories/:id" do
-    before{get "/categories/#{category_id}"}
+    before{get "/api/categories/#{category_id}",  headers: headers }
 
     context "when the record exists" do
       it 'returns the category' do
@@ -47,12 +54,16 @@ RSpec.describe 'Category API', type: :request do
   end
 
   describe "POST /categories" do
-    let(:valid_attributes) {{name: 'Clothes', description: 'comfortable clothes just for you'}}
+    let(:valid_attributes) do 
+      { name: 'Furniture', description: 'comfortable clothes just for you'}.to_json
+    end
 
     context "when the request is valid" do
-      before {post '/categories', params: valid_attributes}
+      before do
+        post '/api/categories', params: valid_attributes, headers: headers
+      end
       it "create a category" do
-        expect(json['name']).to eq('Clothes')
+        expect(json['name']).to eq('Furniture')
       end
       
       it "returns status code 201" do
@@ -63,7 +74,9 @@ RSpec.describe 'Category API', type: :request do
     end
 
     context "when the request is invalid" do
-      before {post '/categories', params: {name: ''}}
+      before do
+        post '/api/categories', params: {name: nil}.to_json, headers: headers
+      end
 
       it "return a status code of 422" do
         expect(response).to have_http_status(422)
@@ -78,9 +91,9 @@ RSpec.describe 'Category API', type: :request do
   end
 
   describe "PUT /categories/:id" do
-    let(:valid_attributes) {{name: 'Wears' }}
+    let(:valid_attributes) {{name: 'Wears' }.to_json}
     context "when the record exists" do
-      before {put "/categories/#{category_id}", params: valid_attributes }
+      before {put "/api/categories/#{category_id}", headers: headers }
 
       it 'updates the record' do
         expect(response.body).to match(/Category Updated Successfully/) 
@@ -93,7 +106,7 @@ RSpec.describe 'Category API', type: :request do
   end
 
   describe 'DELETE /categories/:id' do
-    before {delete "/categories/#{category_id}"}
+    before {delete "/api/categories/#{category_id}",  headers: headers }
     it "return status 200" do
       expect(response).to have_http_status(200)
     end

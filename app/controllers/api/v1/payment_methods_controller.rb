@@ -1,4 +1,6 @@
-class PaymentMethodsController < ApplicationController
+module Api
+  module V1
+    class PaymentMethodsController < ApplicationController
   before_action :set_payment_method, only: [:show, :update, :destroy]
   def index
     @payment_methods = PaymentMethod.all
@@ -33,4 +35,6 @@ class PaymentMethodsController < ApplicationController
   def set_payment_method
     @payment_method = PaymentMethod.find(params[:id])
   end
+end
+end
 end

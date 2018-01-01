@@ -1,7 +1,7 @@
 module Api
   module V1
   class RolesController < ApplicationController
-    before_action :authorize
+    # before_action :authorize
     before_action :set_role, only: %i[show update destroy]
 
     def index
@@ -29,7 +29,7 @@ module Api
       @role.attributes = role_params
       if @role.save(validate: false)
         obj = {
-          message: 'Role Updated Succefully'
+          message: 'Role Updated Successfully'
         }
         return json_response(obj, :ok)
       end
@@ -39,7 +39,7 @@ module Api
     def destroy
       if @role.destroy
         obj = {
-          message: 'Role Deleted Succefully'
+          message: 'Role Deleted Successfully'
         }
         return json_response(obj, :ok)
       end
