@@ -1,12 +1,24 @@
 language: ruby
 rvm:
-  - 2.4.0
+- 2.4.0
 before_script:
-  - bundle exec rake db:create --all
-  - bundle exec rake db:migrate
+- bundle exec rake db:create --all
+- bundle exec rake db:migrate
 script:
-  - bundle exec rake ci:tests
+- bundle exec rake ci:tests
 services:
-  - postgresql
+- postgresql
 notifications:
   email: false
+deploy:
+  provider: heroku
+  api_key:
+    secure: OPtiiHfO72TBJ4dEcjAKHl0wlmbXw7539mHpdARhWrEH7qCpkMADvJFWi51h2JV/51yilhh7BnLPVJrq+e7XMtjFIEVJs+kAe0DasGYODEHT2r7IWZKLVLCymJ+6oqWJpLuJGzXKhswji8nYmsGi5LoV3v2Fzm2LCegGlg86ux7S/B019wagAF2tIhLKwt/OljfTszhN5ivb/cKufuvNrx8bqgsTYOg9q9a9DtDBX4P83uAUvTQTtgk2N3nXx0EKp25Ue8ZMesASJyYtAwelDxqlE1Z52fuQj2CoZfl6BQtYM4cg2HR0NPod3aIM1G3ZE1pzvtEjJRzHWZiyDYurX+6sysu3FeZIbzUtRFEi8M3iJJTOiP7CvJPuNRxyt8vqOLWPoAiNG2d0HxxNmHm7Q0yNKtIUjNbbJ1HK8oda61JMIcfvaBRBbaM6+aKwypgLj+lF8ZdJWH4HvpwfULYbdxl7wsnUlI+SdwYi4LDY7SRfcln/bJDlvKkOtTSzgYtN066WOu4dgaEczn5iQtbFQjwyh1cPK/wLZFxOqvIkUi9DCtu+M89Z/VyFNGE/bU0BLNDElCCqwL+0qunHHKtxTZ6yVRFcM1DJdkpoUMHB37a8ncKJrNanyUqucJX2TLS6OVROAVM+QInTHUTCVqLIma3drZCpRlS7A9hjNZo2mC4=
+  app:
+    develop: quickstore-dev
+    master: quickstore
+  on:
+    repo: https://github.com/DanielAmah/quickstore.git
+  run:
+    - "rails db:migrate"
+
