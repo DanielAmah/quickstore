@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Invoices API', type: :request do
+  let!(:role) { create(:role) }
+  let!(:users) { create_list(:user, 4, role_id: role.id) }
+  let(:role_id) { role.id }
+  let!(:user_id) { users.first.id }
   let!(:order_status_code) {create(:order_status_code)}
   let!(:orders) {create_list(:order, 20, order_status_code_id: order_status_code.id)}
   let!(:invoice_status_code) {create(:invoice_status_code)}
@@ -9,10 +13,11 @@ RSpec.describe 'Invoices API', type: :request do
   let(:order_id) {orders.first.id}
   let(:invoice_status_code_id) {invoice_status_code.id}
   let(:id) {invoices.first.id}
+  let(:headers) { valid_headers(users.first.id) }
 
    # Test suite for GET  /order_status_codes/:order_status_code_id/orders/:order_id/invoices
   describe 'GET  /order_status_codes/:order_status_code_id/orders/:order_id/invoices' do
-    before { get "/order_status_codes/#{order_status_code_id}/orders/#{order_id}/invoices" }
+    before { get "/api/order_status_codes/#{order_status_code_id}/orders/#{order_id}/invoices" , headers: headers }
 
     context 'when orders exists' do
       it 'returns status code 200' do
@@ -39,7 +44,7 @@ RSpec.describe 'Invoices API', type: :request do
 
   # Test suite for GET /categories/:category_id/products/:product_id/order_items/:id
   describe 'GET /order_status_codes/:order_status_code_id/orders/:order_id/invoices/:id' do
-    before { get "/order_status_codes/#{order_status_code_id}/orders/#{order_id}/invoices/#{id}" }
+    before { get "/api/order_status_codes/#{order_status_code_id}/orders/#{order_id}/invoices/#{id}" ,  headers: headers }
 
     context 'when order invoices exists' do
       it 'returns status code 200' do
@@ -66,10 +71,10 @@ RSpec.describe 'Invoices API', type: :request do
 
   # Test suite for POST /categories/:category_id/products/:product_id/order_items
   describe 'POST /order_status_codes/:order_status_code_id/orders/:order_id/invoices' do
-    let(:valid_attributes) { { date: '2017-12-25', description: 'The best trousers ever', order_id: orders.first.id, invoice_status_code_id: invoice_status_code.id } }
+    let(:valid_attributes) { { date: '2017-12-25', description: 'The best trousers ever', order_id: orders.first.id, invoice_status_code_id: invoice_status_code.id }.to_json }
 
     context 'when request attributes are valid' do
-      before { post "/order_status_codes/#{order_status_code_id}/orders/#{order_id}/invoices", params: valid_attributes }
+      before { post "/api/order_status_codes/#{order_status_code_id}/orders/#{order_id}/invoices", params: valid_attributes,  headers: headers }
 
       it 'returns status code 201' do
         expect(response).to have_http_status(201)
@@ -77,7 +82,7 @@ RSpec.describe 'Invoices API', type: :request do
     end
 
     context 'when an invalid request' do
-      before { post "/order_status_codes/#{order_status_code_id}/orders/#{order_id}/invoices", params: {} }
+      before { post "/api/order_status_codes/#{order_status_code_id}/orders/#{order_id}/invoices", params: {},  headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -91,9 +96,9 @@ RSpec.describe 'Invoices API', type: :request do
 
   # Test suite for PUT /order_status_codes/:order_status_code_id/orders/:order_id/invoices/:id
   describe 'PUT /order_status_codes/:order_status_code_id/orders/:order_id/invoices/:id' do
-    let(:valid_attributes) { { description: 'make your payment' } }
+    let(:valid_attributes) { { description: 'make your payment' }.to_json }
 
-    before { put "/order_status_codes/#{order_status_code_id}/orders/#{order_id}/invoices/#{id}", params: valid_attributes }
+    before { put "/api/order_status_codes/#{order_status_code_id}/orders/#{order_id}/invoices/#{id}", params: valid_attributes ,  headers: headers }
 
     context 'when invoice exists' do
       it 'returns status code 200' do
@@ -121,7 +126,7 @@ RSpec.describe 'Invoices API', type: :request do
 
   # Test suite for /order_status_codes/:order_status_code_id/orders/:order_id/invoices/:id
   describe 'DELETE /order_status_codes/:order_status_code_id/orders/:order_id/invoices/:id' do
-    before { delete "/order_status_codes/#{order_status_code_id}/orders/#{order_id}/invoices/#{id}" }
+    before { delete "/api/order_status_codes/#{order_status_code_id}/orders/#{order_id}/invoices/#{id}",  headers: headers }
 
     it 'returns status code 200' do
       expect(response).to have_http_status(200)

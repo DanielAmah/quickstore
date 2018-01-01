@@ -1,3 +1,5 @@
+module Api
+  module V1
 class PaymentsController < ApplicationController
   before_action :set_invoice
   before_action :set_payment, only: [:show, :update, :destroy]
@@ -50,4 +52,6 @@ class PaymentsController < ApplicationController
   def set_payment
     @payment = @invoice.payments.find_by!(id: params[:id]) if @invoice
   end
+end
+end
 end

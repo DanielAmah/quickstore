@@ -1,11 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe 'InvoiceStatusCode API', type: :request do
+  let!(:role) { create(:role) }
+  let!(:users) { create_list(:user, 4, role_id: role.id) }
+  let(:role_id) { role.id }
+  let!(:user_id) { users.first.id }
   let!(:invoice_status_codes){create_list(:invoice_status_code, 10)}
   let(:invoice_status_code_id){invoice_status_codes.first.id}
+  let(:headers) { valid_headers(users.first.id) }
 
   describe 'GET /invoice_status_codes' do
-      before {get '/invoice_status_codes'}
+      before {get '/api/invoice_status_codes',  headers: headers}
       
       it 'return invoice_status_codes' do 
         expect(json).not_to be_empty
@@ -18,7 +23,7 @@ RSpec.describe 'InvoiceStatusCode API', type: :request do
   end
 
   describe "GET /invoice_status_codes/:id" do
-    before{ get "/invoice_status_codes/#{invoice_status_code_id}" }
+    before{ get "/api/invoice_status_codes/#{invoice_status_code_id}",  headers: headers}
 
     context "when the record exists" do
       it 'returns the invoice_status_code' do
@@ -47,10 +52,10 @@ RSpec.describe 'InvoiceStatusCode API', type: :request do
   end
 
   describe "POST /invoice_status_codes" do
-    let(:valid_attributes) {{description: 'Paid'}}
+    let(:valid_attributes) {{description: 'Paid'}.to_json}
 
     context "when the request is valid" do
-      before {post '/invoice_status_codes', params: valid_attributes}
+      before {post '/api/invoice_status_codes', params: valid_attributes,  headers: headers}
       it "create a invoice_status_code" do
         expect(json['description']).to eq('Paid')
       end
@@ -63,7 +68,7 @@ RSpec.describe 'InvoiceStatusCode API', type: :request do
     end
 
     context "when the request is invalid" do
-      before {post '/invoice_status_codes', params: {name: ''}}
+      before {post '/api/invoice_status_codes', params: {name: ''}.to_json,  headers: headers}
 
       it "return a status code of 422" do
         expect(response).to have_http_status(422)
@@ -78,9 +83,9 @@ RSpec.describe 'InvoiceStatusCode API', type: :request do
   end
 
   describe "PUT /invoice_status_codes/:id" do
-    let(:valid_attributes) {{description: 'Unpaid' }}
+    let(:valid_attributes) {{description: 'Unpaid' }.to_json}
     context "when the record exists" do
-      before {put "/invoice_status_codes/#{invoice_status_code_id}", params: valid_attributes }
+      before {put "/api/invoice_status_codes/#{invoice_status_code_id}", params: valid_attributes, headers: headers }
 
       it 'updates the record' do
         expect(response.body).to match(/InvoiceStatusCode Updated Successfully/) 
@@ -93,7 +98,7 @@ RSpec.describe 'InvoiceStatusCode API', type: :request do
   end
 
   describe 'DELETE /invoice_status_codes/:id' do
-    before {delete "/invoice_status_codes/#{invoice_status_code_id}"}
+    before {delete "/api/invoice_status_codes/#{invoice_status_code_id}",  headers: headers}
     it "return status 200" do
       expect(response).to have_http_status(200)
     end

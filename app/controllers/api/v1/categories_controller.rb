@@ -1,15 +1,18 @@
 module Api
   module V1
     class CategoriesController < ApplicationController
+      
       before_action :set_category, only: [:show, :update, :destroy]
       def index
-        @categories = Category.all
+        @categories = Category.get_category
         json_response(@categories)
       end
 
       def create
-        @category = Category.create!(category_params)
+        @category = Category.create_category(category_params)
+    
         json_response(@category, :created)
+
       end
 
       def show
@@ -17,13 +20,18 @@ module Api
       end
 
       def update
-        @category.update(category_params)
-        json_response({message: "Category Updated Successfully"})
+    
+          @category.update(category_params)
+          json_response({message: "Category Updated Successfully"})
+      
+    
       end
 
       def destroy
-        @category.destroy
-        json_response({message: "Category deleted Successfully"})
+  
+          @category.destroy
+          json_response({message: "Category deleted Successfully"})
+      
       end
 
       private
@@ -33,7 +41,7 @@ module Api
       end
 
       def set_category
-        @category = Category.find(params[:id])
+        @category = Category.find_category(params)
       end
     end
   end

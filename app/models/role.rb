@@ -1,3 +1,4 @@
 class Role < ApplicationRecord
-  has_many :users
+  validates_presence_of :role
+  has_many :users,  dependent: :destroy
 end

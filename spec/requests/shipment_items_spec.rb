@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Shipments Items API', type: :request do
+  let!(:role) { create(:role) }
+  let!(:users) { create_list(:user, 4, role_id: role.id) }
+  let(:role_id) { role.id }
+  let!(:user_id) { users.first.id }
   let!(:category) {create(:category)}
   let!(:products) {create_list(:product, 20, category_id: category.id)}
   let!(:order_status_code) {create(:order_status_code)}
@@ -18,10 +22,11 @@ RSpec.describe 'Shipments Items API', type: :request do
   let(:invoice_id) {invoices.first.id}
   let(:shipment_id) {shipments.first.id}
   let(:id) {shipment_items.first.id}
+  let(:headers) { valid_headers(users.first.id) }
 
-   # Test suite for GET  /order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items
-  describe 'GET /order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items' do
-    before { get "/order_status_codes/#{order_status_code_id}/orders/#{order_id}/order_items/#{order_item_id}/shipment_items" }
+   # Test suite for GET  /api/order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items
+  describe 'GET /api/order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items' do
+    before { get "/api/order_status_codes/#{order_status_code_id}/orders/#{order_id}/order_items/#{order_item_id}/shipment_items" , headers: headers }
 
     context 'when shipments exists' do
       it 'returns status code 200' do
@@ -47,8 +52,8 @@ RSpec.describe 'Shipments Items API', type: :request do
   end
 
   # Test suite for GET /categories/:category_id/products/:product_id/order_items/:id
-  describe 'GET /order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items/:id' do
-    before { get "/order_status_codes/#{order_status_code_id}/orders/#{order_id}/order_items/#{order_item_id}/shipment_items/#{id}" }
+  describe 'GET /api//order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items/:id' do
+    before { get "/api/order_status_codes/#{order_status_code_id}/orders/#{order_id}/order_items/#{order_item_id}/shipment_items/#{id}" , headers: headers}
 
     context 'when shipment_items exists' do
       it 'returns status code 200' do
@@ -69,12 +74,12 @@ RSpec.describe 'Shipments Items API', type: :request do
     end
   end
 
-  # Test suite for POST /order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items
-  describe 'POST /order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items' do
-    let(:valid_attributes) { { shipment_id: shipments.first.id, order_item_id: order_items.first.id } }
+  # Test suite for POST /api/order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items
+  describe 'POST /api/order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items' do
+    let(:valid_attributes) { { shipment_id: shipments.first.id, order_item_id: order_items.first.id }.to_json }
 
     context 'when request attributes are valid' do
-      before { post "/order_status_codes/#{order_status_code_id}/orders/#{order_id}/order_items/#{order_item_id}/shipment_items", params: valid_attributes }
+      before { post "/api/order_status_codes/#{order_status_code_id}/orders/#{order_id}/order_items/#{order_item_id}/shipment_items", params: valid_attributes, headers: headers }
 
       it 'returns status code 201' do
         expect(response).to have_http_status(201)
@@ -82,7 +87,7 @@ RSpec.describe 'Shipments Items API', type: :request do
     end
 
     context 'when an invalid request' do
-      before { post "/order_status_codes/#{order_status_code_id}/orders/#{order_id}/order_items/#{order_item_id}/shipment_items", params: {} }
+      before { post "/api/order_status_codes/#{order_status_code_id}/orders/#{order_id}/order_items/#{order_item_id}/shipment_items", params: {}, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -94,11 +99,11 @@ RSpec.describe 'Shipments Items API', type: :request do
     end
   end
 
-  # Test suite for PUT /order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items
-  describe 'PUT /order_status_codes/:order_status_code_id/orders/:order_id//order_items/:order_item_id/shipment_items/:id' do
-    let(:valid_attributes) { { shipment_id: 22} }
+  # Test suite for PUT /api/order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items
+  describe 'PUT /api/order_status_codes/:order_status_code_id/orders/:order_id//order_items/:order_item_id/shipment_items/:id' do
+    let(:valid_attributes) { { shipment_id: 22}.to_json }
 
-    before { put "/order_status_codes/#{order_status_code_id}/orders/#{order_id}/order_items/#{order_item_id}/shipment_items/#{id}", params: valid_attributes }
+    before { put "/api/order_status_codes/#{order_status_code_id}/orders/#{order_id}/order_items/#{order_item_id}/shipment_items/#{id}", params: valid_attributes, headers: headers }
 
     context 'when shipment exists' do
       it 'returns status code 200' do
@@ -119,9 +124,9 @@ RSpec.describe 'Shipments Items API', type: :request do
     end
   end
 
-  # Test suite for /order_status_codes/:order_status_code_id/order_items/:order_item_id/shipment_items/:id
-  describe 'DELETE /order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items/:id' do
-    before { delete "/order_status_codes/#{order_status_code_id}/orders/#{order_id}/order_items/#{order_item_id}/shipment_items/#{id}" }
+  # Test suite for /api/order_status_codes/:order_status_code_id/order_items/:order_item_id/shipment_items/:id
+  describe 'DELETE /api/order_status_codes/:order_status_code_id/orders/:order_id/order_items/:order_item_id/shipment_items/:id' do
+    before { delete "/api/order_status_codes/#{order_status_code_id}/orders/#{order_id}/order_items/#{order_item_id}/shipment_items/#{id}" , headers: headers }
 
     it 'returns status code 200' do
       expect(response).to have_http_status(200)

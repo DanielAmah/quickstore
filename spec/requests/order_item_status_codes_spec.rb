@@ -1,14 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe 'OrderItemStatusCodes API', type: :request do
-  # initialize test data 
+  let!(:role) { create(:role) }
+  let!(:users) { create_list(:user, 4, role_id: role.id) }
+  let(:role_id) { role.id }
+  let!(:user_id) { users.first.id }
   let!(:order_item_status_codes) { create_list(:order_item_status_code, 10) }
   let(:order_item_status_code_id) { order_item_status_codes.first.id }
+  let(:headers) { valid_headers(users.first.id) }
 
   # Test suite for GET /order_item_status_codes
   describe 'GET /order_item_status_codes' do
     # make HTTP get request before each example
-    before { get '/order_item_status_codes' }
+    before { get '/api/order_item_status_codes' , headers: headers }
 
     it 'returns order_item_status_codes' do
       # Note `json` is a custom helper to parse JSON responses
@@ -23,7 +27,7 @@ RSpec.describe 'OrderItemStatusCodes API', type: :request do
 
   # Test suite for GET /order_item_status_codes/:id
   describe 'GET /order_item_status_codes/:id' do
-    before { get "/order_item_status_codes/#{order_item_status_code_id}" }
+    before { get "/api/order_item_status_codes/#{order_item_status_code_id}" , headers: headers}
 
     context 'when the record exists' do
       it 'returns the todo' do
@@ -52,10 +56,10 @@ RSpec.describe 'OrderItemStatusCodes API', type: :request do
   # Test suite for POST /order_status_codes
   describe 'POST /order_item_status_codes' do
     # valid payload
-    let(:valid_attributes) { { description: 'Out of Stock' } }
+    let(:valid_attributes) { { description: 'Out of Stock' }.to_json }
 
     context 'when the request is valid' do
-      before { post '/order_item_status_codes', params: valid_attributes }
+      before { post '/api/order_item_status_codes', params: valid_attributes, headers: headers }
 
       it 'creates a todo' do
         expect(json['description']).to eq('Out of Stock')
@@ -67,7 +71,7 @@ RSpec.describe 'OrderItemStatusCodes API', type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/order_item_status_codes', params: { description: '' } }
+      before { post '/api/order_item_status_codes', params: { description: '' }.to_json, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -82,9 +86,9 @@ RSpec.describe 'OrderItemStatusCodes API', type: :request do
 
   # Test suite for PUT /order_status_codes/:id
   describe 'PUT /order_item_status_codes/:id' do
-    let(:valid_attributes) { { description: 'Delivered' } }
+    let(:valid_attributes) { { description: 'Delivered' }.to_json }
     context 'when the record exists' do
-      before { put "/order_item_status_codes/#{order_item_status_code_id}", params: valid_attributes }
+      before { put "/api/order_item_status_codes/#{order_item_status_code_id}", params: valid_attributes , headers: headers }
 
     
       it 'updates the record' do
@@ -99,7 +103,7 @@ RSpec.describe 'OrderItemStatusCodes API', type: :request do
 
   # Test suite for DELETE /order_item_status_codes/:id
   describe 'DELETE /order_item_status_codes/:id' do
-    before { delete "/order_item_status_codes/#{order_item_status_code_id}" }
+    before { delete "/api/order_item_status_codes/#{order_item_status_code_id}" , headers: headers }
 
     it 'returns status code 200' do
       expect(response).to have_http_status(200)

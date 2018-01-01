@@ -11,6 +11,14 @@ class ApplicationController < ActionController::API
       return true if current_user.role_id == 1
       false
     end
+
+    def authorize
+      unless  admin?
+        status = 401
+        obj = { message: 'Unauthorized' }
+        json_response(obj, status)
+      end
+    end
     
     def authenticate_request
       @current_user = AuthorizeApiRequest.call(request.headers).result
