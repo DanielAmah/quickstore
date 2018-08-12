@@ -53,7 +53,7 @@ RSpec.describe 'Roles API', type: :request do
 
   describe 'POST /roles' do
     # valid payload
-    let(:valid_attributes) { { role: 'fellow', description: 'normal user' }.to_json }
+    let(:valid_attributes) { { role: 'customer', description: 'normal user' }.to_json }
 
     context 'when the request is valid' do
       before do
@@ -61,7 +61,7 @@ RSpec.describe 'Roles API', type: :request do
       end
 
       it 'creates a role' do
-        expect(json['role']).to eq('fellow')
+        expect(json['role']).to eq('customer')
       end
 
       it 'returns status code 201' do
@@ -71,7 +71,7 @@ RSpec.describe 'Roles API', type: :request do
 
     context 'when the request is invalid' do
       before do
-        post '/api/roles', params: { title: 'Pikolo' }.to_json, headers: headers
+        post '/api/roles', params: { title: 'Bad title' }.to_json, headers: headers
       end
 
       it 'returns status code 422' do
