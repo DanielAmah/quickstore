@@ -9,12 +9,13 @@ RSpec.describe 'Category API', type: :request do
   let(:category_id){categories.first.id}
   let(:headers) { valid_headers(users.first.id) }
 
+  # Test suite to get categories
   describe 'GET /categories' do
       before do
         get '/api/categories',  headers: headers
       end
-      
-      it 'return categories' do 
+
+      it 'return categories' do
         expect(json).not_to be_empty
         expect(json.size).to eq(10)
       end
@@ -24,6 +25,7 @@ RSpec.describe 'Category API', type: :request do
       end
   end
 
+    # Test suite to get a category
   describe "GET /categories/:id" do
     before{get "/api/categories/#{category_id}",  headers: headers }
 
@@ -44,17 +46,17 @@ RSpec.describe 'Category API', type: :request do
       it "return status 404" do
         expect(response).to have_http_status(404)
       end
-      
+
       it "returns a not found page" do
         expect(response.body).to match(/Couldn't find Category/)
       end
-        
+
     end
-  
+
   end
 
   describe "POST /categories" do
-    let(:valid_attributes) do 
+    let(:valid_attributes) do
       { name: 'Furniture', description: 'comfortable clothes just for you'}.to_json
     end
 
@@ -65,12 +67,12 @@ RSpec.describe 'Category API', type: :request do
       it "create a category" do
         expect(json['name']).to eq('Furniture')
       end
-      
+
       it "returns status code 201" do
         expect(response).to have_http_status(201)
       end
-        
-    
+
+
     end
 
     context "when the request is invalid" do
@@ -96,7 +98,7 @@ RSpec.describe 'Category API', type: :request do
       before {put "/api/categories/#{category_id}", headers: headers }
 
       it 'updates the record' do
-        expect(response.body).to match(/Category Updated Successfully/) 
+        expect(response.body).to match(/Category Updated Successfully/)
       end
 
       it 'return status code 200' do

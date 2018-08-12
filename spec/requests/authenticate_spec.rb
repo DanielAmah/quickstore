@@ -7,7 +7,7 @@ RSpec.describe 'Authenticate API', type: :request do
   let!(:user_id) { users.first.id }
 
 describe 'POST /register' do
-  # valid payload
+
    let(:valid_attributes) { { name: 'daniel', email: 'jack@test.com', password: 'mealso', phone_number: '08012345678', address: 'No 22 MaryLand', city: 'lagos', state: 'lagos', country: 'Nigeria', role_id: roles.first.id  }}
 
    context 'when the request is valid' do
